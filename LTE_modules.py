@@ -43,6 +43,10 @@ class LteProcess:
             self.talk(port_addresses['SGW'], 'STOP LISTENING')
         except:
             pass
+        try:
+            self.talk(port_addresses['PGW'], 'STOP LISTENING')
+        except:
+            pass
 
         try:
             self.talk(port_addresses['UE'], 'STOP LISTENING')
@@ -192,14 +196,30 @@ class SGW(LteProcess):
 
     def handle_incoming_message(self, msg, conn):
         if msg.split()[:2] == ['CREATE', 'SESSION']:
-            response = 'CONNECTION ACCEPTED SESSION CREATED'
-            communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['MME'], response))
+            communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['PGW'], msg))
             communicator_thread.start()
             # communicator_thread.join()
+        if msg.split()[:2] == ['CONNECTION', 'ACCEPTED']:
+            communicator_thread2 = threading.Thread(target=self.talk, args=(port_addresses['MME'], msg))
+            communicator_thread2.start()
+            # communicator_thread2.join()
+
 
 
 class PGW(LteProcess):
-    pass
+    def __init__(self):
+        super().__init__(port_addresses['PGW'])
+
+        self.listener_thread = threading.Thread(target=self.listen)
+        self.listener_thread.start()
+
+    def handle_incoming_message(self, msg, conn):
+        if msg.split()[:2] == ['CREATE', 'SESSION']:
+            response = 'CONNECTION ACCEPTED SESSION CREATED'
+            communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['SGW'], response))
+            communicator_thread.start()
+            # communicator_thread.join()
+
 
 
 if __name__ == '__main__':
@@ -208,5 +228,6 @@ if __name__ == '__main__':
     UE1 = UE()
     mme = MME()
     sgw = SGW()
+    pgw = PGW()
 
     UE1.attach()
