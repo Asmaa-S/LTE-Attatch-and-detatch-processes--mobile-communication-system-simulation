@@ -1,8 +1,10 @@
+import time
 from multiprocessing.connection import Listener, Client
 import multiprocessing
 import threading
 import os
 from random import randint
+
 # in this implementation, we're assuming the mobile station at address 5000 is already connected the nearest
 # eNb tower at address 5001 and we're continuing the attach process from here starting with the UE sending an attach
 # request
@@ -12,27 +14,45 @@ from random import randint
 # 2- enb forwards the request to mme
 # 3- mme forwards the request to sgw
 # 4- sgw replies 'accept' and sends it to the mme
-# 5- mme sends the accept to the enb
+# 5- mme sends the accept to the enb which then sends it back the UE
 
 
 port_addresses = {'UE': 5000, 'eNb': 5001, 'MME': 5003, 'HSS': 5004, 'PGW': 5005, 'SGW': 5006}
 
+
 def generate_random_ip():
     return ".".join(map(str, (randint(0, 255)
-                       for _ in range(4))))
+                              for _ in range(4))))
+
 
 class LteProcess:
     def __init__(self, my_port):
         self.my_port = my_port
+
     def stop_all(self):
-        self.talk(port_addresses['eNb'], 'STOP LISTENING')
-        self.talk(port_addresses['MME'], 'STOP LISTENING')
-        self.talk(port_addresses['SGW'], 'STOP LISTENING')
-        self.talk(port_addresses['UE'], 'STOP LISTENING')
+        try:
+            self.talk(port_addresses['eNb'], 'STOP LISTENING')
+        except:
+            pass
+        try:
+            self.talk(port_addresses['MME'], 'STOP LISTENING')
+        except:
+            pass
+
+        try:
+            self.talk(port_addresses['SGW'], 'STOP LISTENING')
+        except:
+            pass
+
+        try:
+            self.talk(port_addresses['UE'], 'STOP LISTENING')
+        except:
+            pass
 
     def listen(self):
         address = ('localhost', self.my_port)
         listener = Listener(address)
+        # timeout = time.time() + 10
         while True:
             conn = listener.accept()
             # print(self.__class__.__name__, ' has connection from', listener.last_accepted)
@@ -41,10 +61,13 @@ class LteProcess:
                 # do something with msg
                 if msg != 'close':
                     print(self.__class__.__name__, ' has a message received:  ', msg)
+
                 self.handle_incoming_message(msg, conn)
+
                 if msg in ['close', 'STOP LISTENING']:
                     conn.close()
                     break
+
             if msg == 'STOP LISTENING':
                 break
 
@@ -77,22 +100,20 @@ class UE(LteProcess):
         # self.target_port = port_addresses['eNb']
         self.listener_thread = threading.Thread(target=self.listen)
         self.listener_thread.start()
-        #self.listener_thread.join()
+        # self.listener_thread.join()
 
     def attach(self, eNb_address=port_addresses['eNb']):
         attach_request = f'ATTACH REQUEST FROM UE AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
         communicator_thread = threading.Thread(target=self.talk, args=(eNb_address, attach_request))
         # stopper_thread = threading.Thread(target=self.stop_all)
         communicator_thread.start()
-        #communicator_thread.join()
-
+        # communicator_thread.join()
 
     def handle_incoming_message(self, msg, conn):
         if msg == 'CONNECTION ACCEPTED':
             print('UE: connection was accepted')
-
-
-
+        stopper_thread = threading.Thread(target=self.stop_all)
+        stopper_thread.start()
 
 
 class eNb(LteProcess):
@@ -103,7 +124,6 @@ class eNb(LteProcess):
         self.listener_thread = threading.Thread(target=self.listen)
         self.listener_thread.start()
         # self.listener_thread.join()
-
 
     def handle_incoming_message(self, msg, conn):
         if msg.split()[:2] == ['ATTACH', 'REQUEST']:
@@ -116,8 +136,6 @@ class eNb(LteProcess):
             communicator_thread2 = threading.Thread(target=self.talk, args=(port_addresses['UE'], msg))
             communicator_thread2.start()
             # communicator_thread2.join()
-
-
 
 
 class MME(LteProcess):
@@ -135,21 +153,17 @@ class MME(LteProcess):
         # and send something to the hss
         # send to the SGW something that starts with 'CREATE SESSION'
 
-        #do authentication logic
+        # do authentication logic
 
         if msg.split()[:2] == ['ATTACH', 'REQUEST']:
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['SGW'], 'CREATE SESSION'))
             communicator_thread.start()
-            #communicator_thread.join()
-
+            # communicator_thread.join()
 
         if msg.split()[:2] == ['CONNECTION', 'ACCEPTED']:
             communicator_thread2 = threading.Thread(target=self.talk, args=(port_addresses['eNb'], msg))
             communicator_thread2.start()
             # communicator_thread2.join()
-
-
-
 
 
 class HSS(LteProcess):
@@ -160,7 +174,6 @@ class HSS(LteProcess):
         self.listener_thread = threading.Thread(target=self.listen)
         self.listener_thread.start()
         # self.listener_thread.join()
-
 
     def handle_incoming_message(self, msg, conn):
         # do something when receiving a message
@@ -178,13 +191,11 @@ class SGW(LteProcess):
         # self.listener_thread.join()
 
     def handle_incoming_message(self, msg, conn):
-
         if msg.split()[:2] == ['CREATE', 'SESSION']:
             response = 'CONNECTION ACCEPTED SESSION CREATED'
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['MME'], response))
             communicator_thread.start()
             # communicator_thread.join()
-
 
 
 class PGW(LteProcess):
