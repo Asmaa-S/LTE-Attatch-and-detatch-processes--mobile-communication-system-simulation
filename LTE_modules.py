@@ -4,7 +4,7 @@ import multiprocessing
 import threading
 import os
 from random import randint
-from Crypto.Hash import *
+from helpers import *
 
 # in this implementation, we're assuming the mobile station at address 5000 is already connected the nearest
 # eNb tower at address 5001 and we're continuing the attach process from here starting with the UE sending an attach
@@ -19,7 +19,6 @@ from Crypto.Hash import *
 
 
 port_addresses = {'UE': 5000, 'eNb': 5001, 'MME': 5003, 'HSS': 5004, 'PGW': 5005, 'SGW': 5006}
-from helpers import *
 class LteProcess:
     def __init__(self, my_port):
         self.my_port = my_port
