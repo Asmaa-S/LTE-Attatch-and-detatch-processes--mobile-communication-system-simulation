@@ -109,6 +109,7 @@ class UE(LteProcess):
         # self.listener_thread.join()
 
     def attach(self, eNb_address=port_addresses['eNb']):
+        print('starting the attach procedure\n\n')
         attach_request = f'ATTACH REQUEST FROM UE AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
         communicator_thread = threading.Thread(target=self.talk, args=(eNb_address, attach_request))
         communicator_thread.start()
@@ -116,6 +117,8 @@ class UE(LteProcess):
         
         
     def detach(self, eNb_address=port_addresses['MME']):
+        print('\n\n starting the detach procedure\n\n')
+
         attach_request = f'DETACH REQUEST'
         communicator_thread = threading.Thread(target=self.talk, args=(eNb_address, attach_request))
         communicator_thread.start() 
