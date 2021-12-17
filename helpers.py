@@ -58,7 +58,6 @@ def format_ip_packet(msg, source_ip='localhost', destination_ip='localhost'):
 
     return packet
 
-
 def format_udp_packet(msg, source_port, destination_port):
     length = 8 + len(msg.encode('utf-8'))  # length of entire packet = header size + msg size- udp header is 8 bytes
     packet = {'source_port': source_port,
@@ -70,6 +69,8 @@ def format_udp_packet(msg, source_port, destination_port):
 
     packet = packet = dict(packet, **Checksum)
     return packet
+
+
 
 def generate_random_ip():
     return ".".join(map(str, (randint(0, 255)
