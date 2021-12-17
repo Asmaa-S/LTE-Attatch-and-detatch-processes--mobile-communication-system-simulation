@@ -21,6 +21,8 @@ from helpers import *
 stop_listening_after_attach = False
 
 port_addresses = {'UE': 5000, 'eNb': 5001, 'MME': 5003, 'HSS': 5004, 'PGW': 5005, 'SGW': 5006}
+
+
 class LteProcess:
     def __init__(self, my_port):
         self.my_port = my_port
@@ -251,7 +253,6 @@ class HSS(LteProcess):
                 communicator_thread.start()
 
 
-
 class SGW(LteProcess):
     def __init__(self):
         super().__init__(port_addresses['SGW'])
@@ -261,11 +262,15 @@ class SGW(LteProcess):
         # self.listener_thread.join()
 
     def handle_incoming_message(self, msg, conn):
+        if type(msg) != str:
+            msg = GTP_c_decapsulate(msg)
+
         if msg.split()[:3] == ['CREATE', 'SESSION', 'REQUEST']:
             ms, meta = msg.split('|')
             in_port, IMSI = meta.split('-IMSI=')
-            self.IMSI = int(IMSI)           
-            session_request = f'CREATE SESSION REQUEST FROM SGW AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'    
+            self.current_IMSI = int(IMSI)
+            session_request = f'CREATE SESSION REQUEST FROM SGW AT ADDRESS|{self.my_port}-IMSI={self.current_IMSI}'
+            session_request = GTP_c_encapsulate(session_request, imsi=self.current_IMSI)
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['PGW'], session_request))
             communicator_thread.start()
             # communicator_thread.join()
@@ -292,8 +297,15 @@ class PGW(LteProcess):
         self.listener_thread.start()
 
     def handle_incoming_message(self, msg, conn):
+        if type(msg) != str:
+            msg = GTP_c_decapsulate(msg)
+
         if msg.split()[:3] == ['CREATE', 'SESSION', 'REQUEST']:
+            _, IMSI = msg.split('-IMSI=')
+            self.IMSI = int(IMSI)
+
             response = 'CREATE SESSION RESPONSE'
+            response = GTP_c_encapsulate(response)
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['SGW'], response))
             communicator_thread.start()
             # communicator_thread.join()

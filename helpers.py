@@ -2,6 +2,7 @@ import os
 from random import randint
 from socket import gethostname, gethostbyname
 from functools import reduce
+from ast import literal_eval as eval
 
 
 # returns total as checksum
@@ -58,6 +59,7 @@ def format_ip_packet(msg, source_ip='localhost', destination_ip='localhost'):
 
     return packet
 
+
 def format_udp_packet(msg, source_port, destination_port):
     length = 8 + len(msg.encode('utf-8'))  # length of entire packet = header size + msg size- udp header is 8 bytes
     packet = {'source_port': source_port,
@@ -70,8 +72,28 @@ def format_udp_packet(msg, source_port, destination_port):
     packet = packet = dict(packet, **Checksum)
     return packet
 
+def GTP_c_encapsulate(msg, imsi=555555555555):
+    with_tunnel_id = {'tid':generate_tunnel_id(imsi), 'payload': msg}
+    udp_packet = format_udp_packet(str(with_tunnel_id), 2123, 2123)
+    ip_packet = format_ip_packet(str(udp_packet))
+    return ip_packet
+
+def GTP_c_decapsulate(ip_packet):
+    if type(ip_packet) == str:
+        ip_packet = eval(ip_packet)
+
+    gtp_packet = eval(ip_packet['payload'])
+    udp_packet = eval(gtp_packet['payload'])
+    msg = udp_packet['payload']
+    return msg
+
 
 
 def generate_random_ip():
     return ".".join(map(str, (randint(0, 255)
                               for _ in range(4))))
+
+def generate_tunnel_id(imsi):
+    return imsi % 50
+
+
