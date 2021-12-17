@@ -11,13 +11,6 @@ from helpers import *
 # eNb tower at address 5001 and we're continuing the attach process from here starting with the UE sending an attach
 # request
 
-# current dummy sequence (still not complete)
-# 1- ue sends attach request to enb
-# 2- enb forwards the request to mme
-# 3- mme forwards the request to sgw
-# 4- sgw replies 'accept' and sends it to the mme
-# 5- mme sends the accept to the enb which then sends it back the UE
-
 stop_listening_after_attach = False
 
 port_addresses = {'UE': 5000, 'eNb': 5001, 'MME': 5003, 'HSS': 5004, 'PGW': 5005, 'SGW': 5006}
@@ -103,6 +96,7 @@ class UE(LteProcess):
     def __init__(self):
         super().__init__(port_addresses['UE'])
         self.IMSI = randint(100000000000, 999999999999)
+        self.MEI = randint(100000000000, 999999999999)  # mobile equipment identity
         # self.target_port = port_addresses['eNb']
         self.listener_thread = threading.Thread(target=self.listen)
         self.listener_thread.start()
@@ -110,7 +104,7 @@ class UE(LteProcess):
 
     def attach(self, eNb_address=port_addresses['eNb']):
         print('starting the attach procedure\n\n')
-        attach_request = f'ATTACH REQUEST FROM UE AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
+        attach_request = f'ATTACH REQUEST FROM UE AT ADDRESS|{self.my_port}-IMSI={self.IMSI}|-MEI={self.MEI}'
         communicator_thread = threading.Thread(target=self.talk, args=(eNb_address, attach_request))
         communicator_thread.start()
         # communicator_thread.join()
@@ -146,9 +140,10 @@ class eNb(LteProcess):
     def handle_incoming_message(self, msg, conn):
 
         if msg.split()[:2] == ['ATTACH', 'REQUEST']:
-            ms, meta = msg.split('|')
+            ms, meta,MEI = msg.split('|')
             in_port, IMSI = meta.split('-IMSI=')
-            msg = f'ATTACH REQUEST FROM eNb AT ADDRESS|{self.my_port}-IMSI={IMSI}'
+            MEI = int(MEI.split('-MEI=')[1])
+            msg = f'ATTACH REQUEST FROM eNb AT ADDRESS|{self.my_port}-IMSI={IMSI}|-MEI={MEI}'
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['MME'], msg))
             communicator_thread.start()
 
@@ -186,15 +181,17 @@ class MME(LteProcess):
         # do authentication logic
 
         if msg.split()[:2] == ['ATTACH', 'REQUEST']:
-            ms, meta = msg.split('|')
+            ms, meta,MEI = msg.split('|')
             in_port, IMSI = meta.split('-IMSI=')
-            self.IMSI = int(IMSI)            
+            self.MEI = int(MEI.split('-MEI=')[1])
+
+            self.IMSI = int(IMSI)
             location_update_request = f'UPDATE LOCATION REQUEST FROM MME AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['HSS'], location_update_request))
             communicator_thread.start()
 
         elif msg.split()[:3] == ['UPDATE', 'LOCATION', 'ACKNOWLEDGEMENT']:
-            session_request = f'CREATE SESSION REQUEST FROM MME AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
+            session_request = f'CREATE SESSION REQUEST FROM MME AT ADDRESS|{self.my_port}-IMSI={self.IMSI}|-MEI={self.MEI}'
             communicator_thread = threading.Thread(target = self.talk, args =(port_addresses['SGW'], session_request))
             communicator_thread.start()
             
@@ -269,11 +266,12 @@ class SGW(LteProcess):
             msg = GTP_c_decapsulate(msg)
 
         if msg.split()[:3] == ['CREATE', 'SESSION', 'REQUEST']:
-            ms, meta = msg.split('|')
-            in_port, IMSI = meta.split('-IMSI=')
+            ms, meta, MEI = msg.split('|')
+            in_port, IMSI  = meta.split('-IMSI=')
+            self.current_MEI= int(MEI.split('-MEI=')[1])
             self.current_IMSI = int(IMSI)
-            session_request = f'CREATE SESSION REQUEST FROM SGW AT ADDRESS|{self.my_port}-IMSI={self.current_IMSI}'
-            session_request = GTP_c_encapsulate(session_request, imsi=self.current_IMSI)
+            session_request = f'CREATE SESSION REQUEST FROM SGW AT ADDRESS|{self.my_port}-IMSI={self.current_IMSI}|-MEI={self.current_MEI}'
+            session_request = GTP_c_encapsulate(session_request, imsi=self.current_IMSI, mei=self.current_MEI)
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['PGW'], session_request))
             communicator_thread.start()
             # communicator_thread.join()
@@ -291,7 +289,6 @@ class SGW(LteProcess):
             communicator_thread.start()             
 
 
-
 class PGW(LteProcess):
     def __init__(self):
         super().__init__(port_addresses['PGW'])
@@ -304,11 +301,10 @@ class PGW(LteProcess):
             msg = GTP_c_decapsulate(msg)
 
         if msg.split()[:3] == ['CREATE', 'SESSION', 'REQUEST']:
-            _, IMSI = msg.split('-IMSI=')
-            self.IMSI = int(IMSI)
+            self.IMSI, self.MEI =[int(i) for i in msg.split('-IMSI=')[1].split('|-MEI=')]
 
             response = 'CREATE SESSION RESPONSE'
-            response = GTP_c_encapsulate(response)
+            response = GTP_c_encapsulate(response, self.IMSI, self.MEI)
             communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['SGW'], response))
             communicator_thread.start()
             # communicator_thread.join()

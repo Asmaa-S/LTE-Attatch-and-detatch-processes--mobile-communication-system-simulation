@@ -72,9 +72,45 @@ def format_udp_packet(msg, source_port, destination_port):
     packet = packet = dict(packet, **Checksum)
     return packet
 
-def GTP_c_encapsulate(msg, imsi=555555555555):
-    with_tunnel_id = {'tid':generate_tunnel_id(imsi), 'payload': msg}
-    udp_packet = format_udp_packet(str(with_tunnel_id), 2123, 2123)
+def GTP_c_encapsulate(msg, imsi,  mei):
+    if msg.split()[:3]== ['CREATE', 'SESSION', 'REQUEST']:
+        gtp_packet = {'flags': 0x48,
+                  'message_type':32, # create session request
+                  'message_length': len(msg.encode('utf-8')),
+                  'teid': generate_tunnel_id(imsi),
+                  'sequence_number':167430,
+                  'spare':0,
+                  'IMSI': imsi,
+                  'APN': 'jionet.mnc854.mcc405.gprs', # access point name
+                  'MEI': mei, # mobile equipment
+                  'MSISDN': 65638974563,
+                  'RAT_type': 6, # EUTRAN
+                  'serving_network': 'MCC 602- Egypt (Republic of) MNC 02',
+                  #'ULI': '',
+                  'PDN_type': 'IPv4',
+                  'APN_restriction':'value 0',
+                  'recovery_reset_counter': 170,
+                  'bearer_context':'[grouped IE]',
+                   'payload':msg
+        }
+
+    elif msg.split()[:3]== ['CREATE', 'SESSION', 'RESPONSE']:
+        gtp_packet = {'flags': 0x48,
+                  'message_type': 33,  # create session response
+                  'message_length': len(msg.encode('utf-8')),
+                  'teid': generate_tunnel_id(imsi),
+                  'sequence_number': 1129199,
+                  'spare': 0,
+                  'cause': 16,  # request accepted
+                  'APN_restriction': 'value 0',
+                  'recovery_reset_counter': 8,
+                  'bearer_context': '[grouped IE]',
+                  'payload': msg
+
+                      }
+
+
+    udp_packet = format_udp_packet(str(gtp_packet), 2123, 2123)
     ip_packet = format_ip_packet(str(udp_packet))
     return ip_packet
 
@@ -82,9 +118,9 @@ def GTP_c_decapsulate(ip_packet):
     if type(ip_packet) == str:
         ip_packet = eval(ip_packet)
 
-    gtp_packet = eval(ip_packet['payload'])
-    udp_packet = eval(gtp_packet['payload'])
-    msg = udp_packet['payload']
+    udp_packet = eval(ip_packet['payload'])
+    gtp_packet = eval(udp_packet['payload'])
+    msg = gtp_packet['payload']
     return msg
 
 

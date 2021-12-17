@@ -1,13 +1,13 @@
 starting the attach procedure
 
 
-eNb  has a message received:   ATTACH REQUEST FROM UE AT ADDRESS|5000-IMSI=852928056597
-MME  has a message received:   ATTACH REQUEST FROM eNb AT ADDRESS|5001-IMSI=852928056597
-HSS  has a message received:   UPDATE LOCATION REQUEST FROM MME AT ADDRESS|5003-IMSI=852928056597
+eNb  has a message received:   ATTACH REQUEST FROM UE AT ADDRESS|5000-IMSI=721917911964|-MEI=951437330792
+MME  has a message received:   ATTACH REQUEST FROM eNb AT ADDRESS|5001-IMSI=721917911964|-MEI=951437330792
+HSS  has a message received:   UPDATE LOCATION REQUEST FROM MME AT ADDRESS|5003-IMSI=721917911964
 MME  has a message received:   UPDATE LOCATION ACKNOWLEDGEMENT
-SGW  has a message received:   CREATE SESSION REQUEST FROM MME AT ADDRESS|5003-IMSI=852928056597
-PGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 206, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 99, \'payload\': "{\'tid\': 47, \'payload\': \'CREATE SESSION REQUEST FROM SGW AT ADDRESS|5006-IMSI=852928056597\'}", \'checksum\': 12295}', 'header_checksum': 15353, 'total_checksum': 31542}
-SGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 162, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 56, \'payload\': "{\'tid\': 5, \'payload\': \'CREATE SESSION RESPONSE\'}", \'checksum\': 9579}', 'header_checksum': 15354, 'total_checksum': 28790}
+SGW  has a message received:   CREATE SESSION REQUEST FROM MME AT ADDRESS|5003-IMSI=721917911964|-MEI=951437330792
+PGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 610, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 502, \'payload\': "{\'flags\': 72, \'message_type\': 32, \'message_length\': 83, \'teid\': 14, \'sequence_number\': 167430, \'spare\': 0, \'IMSI\': 721917911964, \'APN\': \'jionet.mnc854.mcc405.gprs\', \'MEI\': 951437330792, \'MSISDN\': 65638974563, \'RAT_type\': 6, \'serving_network\': \'MCC 602- Egypt (Republic of) MNC 02\', \'PDN_type\': \'IPv4\', \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 170, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION REQUEST FROM SGW AT ADDRESS|5006-IMSI=721917911964|-MEI=951437330792\'}", \'checksum\': 42287}', 'header_checksum': 15352, 'total_checksum': 65217}
+SGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 367, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 259, \'payload\': "{\'flags\': 72, \'message_type\': 33, \'message_length\': 23, \'teid\': 14, \'sequence_number\': 1129199, \'spare\': 0, \'cause\': 16, \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 8, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION RESPONSE\'}", \'checksum\': 26112}', 'header_checksum': 15361, 'total_checksum': 47384}
 MME  has a message received:   CREATE SESSION RESPONSE
 eNb  has a message received:   ATTACH ACCEPT / INITAL CONTEXT SETUP REQUEST
 UE  has a message received:   ATTACH ACCEPT 
