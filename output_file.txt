@@ -1,37 +1,74 @@
-starting the attach procedure
+********starting the attach procedure********
 
 
-eNb  has a message received:   ATTACH REQUEST FROM UE AT ADDRESS|5000-IMSI=721917911964|-MEI=951437330792
-MME  has a message received:   ATTACH REQUEST FROM eNb AT ADDRESS|5001-IMSI=721917911964|-MEI=951437330792
-HSS  has a message received:   UPDATE LOCATION REQUEST FROM MME AT ADDRESS|5003-IMSI=721917911964
-MME  has a message received:   UPDATE LOCATION ACKNOWLEDGEMENT
-SGW  has a message received:   CREATE SESSION REQUEST FROM MME AT ADDRESS|5003-IMSI=721917911964|-MEI=951437330792
-PGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 610, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 502, \'payload\': "{\'flags\': 72, \'message_type\': 32, \'message_length\': 83, \'teid\': 14, \'sequence_number\': 167430, \'spare\': 0, \'IMSI\': 721917911964, \'APN\': \'jionet.mnc854.mcc405.gprs\', \'MEI\': 951437330792, \'MSISDN\': 65638974563, \'RAT_type\': 6, \'serving_network\': \'MCC 602- Egypt (Republic of) MNC 02\', \'PDN_type\': \'IPv4\', \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 170, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION REQUEST FROM SGW AT ADDRESS|5006-IMSI=721917911964|-MEI=951437330792\'}", \'checksum\': 42287}', 'header_checksum': 15352, 'total_checksum': 65217}
-SGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 367, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 259, \'payload\': "{\'flags\': 72, \'message_type\': 33, \'message_length\': 23, \'teid\': 14, \'sequence_number\': 1129199, \'spare\': 0, \'cause\': 16, \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 8, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION RESPONSE\'}", \'checksum\': 26112}', 'header_checksum': 15361, 'total_checksum': 47384}
-MME  has a message received:   CREATE SESSION RESPONSE
-eNb  has a message received:   ATTACH ACCEPT / INITAL CONTEXT SETUP REQUEST
-UE  has a message received:   ATTACH ACCEPT 
-UE  has a message received:   RRC RECONFIGURATION
-MME  has a message received:   INITAL CONTEXT SETUP RESPONSE
-MME  has a message received:   ATTACH COMPLETE
-SGW  has a message received:   MODIFY BEARER REQUEST
-MME  has a message received:   MODIFY BEARER RESPONSE
+eNb  has a message received:   ATTACH REQUEST FROM UE AT ADDRESS|5000-IMSI=947743138825|-MEI=837467663209 
+
+MME  has a message received:   ATTACH REQUEST FROM eNb AT ADDRESS|5001-IMSI=947743138825|-MEI=837467663209 
+
+HSS  has a message received:   USER AUTHENTICATION REQUEST FROM MME AT ADDRESS|5003-IMSI=947743138825 
+
+MME  has a message received:   HSS REFERENCE AUTHENTICATION TOKEN=25 
+
+UE  has a message received:   USER AUTHENTICATION TOKEN REQUEST FROM MME AT ADDRESS|5003 
+
+MME  has a message received:   UE AUTHENTICATION TOKEN=25 
+
+AUTHENTICATION SUCCESSFUL
+
+HSS  has a message received:   UPDATE LOCATION REQUEST FROM MME AT ADDRESS|5003-IMSI=947743138825 
+
+MME  has a message received:   UPDATE LOCATION ACKNOWLEDGEMENT 
+
+SGW  has a message received:   CREATE SESSION REQUEST FROM MME AT ADDRESS|5003-IMSI=947743138825|-MEI=837467663209 
+
+PGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 610, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 502, \'payload\': "{\'flags\': 72, \'message_type\': 32, \'message_length\': 83, \'teid\': 25, \'sequence_number\': 167430, \'spare\': 0, \'IMSI\': 947743138825, \'APN\': \'jionet.mnc854.mcc405.gprs\', \'MEI\': 837467663209, \'MSISDN\': 65638974563, \'RAT_type\': 6, \'serving_network\': \'MCC 602- Egypt (Republic of) MNC 02\', \'PDN_type\': \'IPv4\', \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 170, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION REQUEST FROM SGW AT ADDRESS|5006-IMSI=947743138825|-MEI=837467663209\'}", \'checksum\': 42313}', 'header_checksum': 15352, 'total_checksum': 65233} 
+
+SGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 367, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 259, \'payload\': "{\'flags\': 72, \'message_type\': 33, \'message_length\': 23, \'teid\': 25, \'sequence_number\': 1129199, \'spare\': 0, \'cause\': 16, \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 8, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION RESPONSE\'}", \'checksum\': 26114}', 'header_checksum': 15361, 'total_checksum': 47388} 
+
+MME  has a message received:   CREATE SESSION RESPONSE 
+
+eNb  has a message received:   ATTACH ACCEPT / INITAL CONTEXT SETUP REQUEST 
+
+UE  has a message received:   ATTACH ACCEPT  
+
+UE  has a message received:   RRC RECONFIGURATION 
+
+MME  has a message received:   INITAL CONTEXT SETUP RESPONSE 
+
+MME  has a message received:   ATTACH COMPLETE 
+
+SGW  has a message received:   MODIFY BEARER REQUEST 
+
+MME  has a message received:   MODIFY BEARER RESPONSE 
+
 mme: Attach procedures done!
 
 
- starting the detach procedure
+ ********starting the detach procedure********
 
 
-MME  has a message received:   DETACH REQUEST
-SGW  has a message received:   DELETE SESSION REQUEST
-MME  has a message received:   DELETE SESSION RESPONSE
-UE  has a message received:   DETACH ACCEPT
-eNb  has a message received:   UE CONTEXT RELEASE COMMAND
-MME  has a message received:   UE CONTEXT RELEASE COMPLETE
+MME  has a message received:   DETACH REQUEST 
+
+SGW  has a message received:   DELETE SESSION REQUEST 
+
+MME  has a message received:   DELETE SESSION RESPONSE 
+
+UE  has a message received:   DETACH ACCEPT 
+
+eNb  has a message received:   UE CONTEXT RELEASE COMMAND 
+
+MME  has a message received:   UE CONTEXT RELEASE COMPLETE 
+
 mme: Detach procedures done!
-eNb  has a message received:   STOP LISTENING
-MME  has a message received:   STOP LISTENING
-HSS  has a message received:   STOP LISTENING
-SGW  has a message received:   STOP LISTENING
-PGW  has a message received:   STOP LISTENING
-UE  has a message received:   STOP LISTENING
+eNb  has a message received:   STOP LISTENING 
+
+MME  has a message received:   STOP LISTENING 
+
+HSS  has a message received:   STOP LISTENING 
+
+SGW  has a message received:   STOP LISTENING 
+
+PGW  has a message received:   STOP LISTENING 
+
+UE  has a message received:   STOP LISTENING 
+

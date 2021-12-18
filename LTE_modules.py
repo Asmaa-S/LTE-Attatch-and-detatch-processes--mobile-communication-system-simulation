@@ -59,7 +59,7 @@ class LteProcess:
                 msg = conn.recv()
                 # do something with msg
                 if msg != 'close':
-                    print(self.__class__.__name__, ' has a message received:  ', msg)
+                    print(self.__class__.__name__, ' has a message received:  ', msg, '\n')
 
                 self.handle_incoming_message(msg, conn)
 
@@ -103,7 +103,7 @@ class UE(LteProcess):
         # self.listener_thread.join()
 
     def attach(self, eNb_address=port_addresses['eNb']):
-        print('starting the attach procedure\n\n')
+        print('********starting the attach procedure********\n\n')
         attach_request = f'ATTACH REQUEST FROM UE AT ADDRESS|{self.my_port}-IMSI={self.IMSI}|-MEI={self.MEI}'
         communicator_thread = threading.Thread(target=self.talk, args=(eNb_address, attach_request))
         communicator_thread.start()
@@ -111,13 +111,19 @@ class UE(LteProcess):
         
         
     def detach(self, eNb_address=port_addresses['MME']):
-        print('\n\n starting the detach procedure\n\n')
+        print('\n\n ********starting the detach procedure********\n\n')
 
         attach_request = f'DETACH REQUEST'
         communicator_thread = threading.Thread(target=self.talk, args=(eNb_address, attach_request))
         communicator_thread.start() 
 
     def handle_incoming_message(self, msg, conn):
+        if msg.split()[:3] == ['USER', 'AUTHENTICATION', 'TOKEN']:
+            reply = f'UE AUTHENTICATION TOKEN={Authentication_token(self.IMSI)}'
+            communicator_thread = threading.Thread(target=self.talk,
+                                                   args=(port_addresses['MME'], reply))
+            communicator_thread.start()
+
         if msg == 'ATTACH ACCEPT':
             print('UE: connection was accepted')
 
@@ -184,11 +190,27 @@ class MME(LteProcess):
             ms, meta,MEI = msg.split('|')
             in_port, IMSI = meta.split('-IMSI=')
             self.MEI = int(MEI.split('-MEI=')[1])
-
             self.IMSI = int(IMSI)
-            location_update_request = f'UPDATE LOCATION REQUEST FROM MME AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
-            communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['HSS'], location_update_request))
+
+            authentication_request = f'USER AUTHENTICATION REQUEST FROM MME AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
+            communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['HSS'], authentication_request))
             communicator_thread.start()
+
+        elif msg.split()[:3] == ['HSS', 'REFERENCE', 'AUTHENTICATION']:
+            _, self.REF_TOKEN = msg.split('=')
+            authentication_request = f'USER AUTHENTICATION TOKEN REQUEST FROM MME AT ADDRESS|{self.my_port}'
+            communicator_thread = threading.Thread(target=self.talk,
+                                                   args=(port_addresses['UE'], authentication_request))
+            communicator_thread.start()
+
+        elif msg.split()[:2] == ['UE', 'AUTHENTICATION']:
+            _, user_token = msg.split('=')
+            if user_token == self.REF_TOKEN:
+                print('AUTHENTICATION SUCCESSFUL\n')
+                request = f'UPDATE LOCATION REQUEST FROM MME AT ADDRESS|{self.my_port}-IMSI={self.IMSI}'
+                communicator_thread = threading.Thread(target=self.talk,
+                                                       args=(port_addresses['HSS'], request))
+                communicator_thread.start()
 
         elif msg.split()[:3] == ['UPDATE', 'LOCATION', 'ACKNOWLEDGEMENT']:
             session_request = f'CREATE SESSION REQUEST FROM MME AT ADDRESS|{self.my_port}-IMSI={self.IMSI}|-MEI={self.MEI}'
@@ -243,7 +265,14 @@ class HSS(LteProcess):
         # you might want to start a communicator thread (look at enb for reference)
         # and send something to the hss
             
-            
+        if msg.split()[:3] == ['USER', 'AUTHENTICATION', 'REQUEST']:
+                ms, meta = msg.split('|')
+                in_port, IMSI = meta.split('-IMSI=')
+                self.IMSI = int(IMSI)
+                response = f'HSS REFERENCE AUTHENTICATION TOKEN={Authentication_token(self.IMSI)}'
+                communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['MME'], response))
+                communicator_thread.start()
+
         if msg.split()[:3] == ['UPDATE', 'LOCATION', 'REQUEST']:
                 ms, meta = msg.split('|')
                 in_port, IMSI = meta.split('-IMSI=')
