@@ -95,8 +95,8 @@ class LteProcess:
 class UE(LteProcess):
     def __init__(self):
         super().__init__(port_addresses['UE'])
-        self.IMSI = randint(100000000000, 999999999999)
-        self.MEI = randint(100000000000, 999999999999)  # mobile equipment identity
+        self._IMSI = randint(100000000000, 999999999999)
+        self._MEI = randint(100000000000, 999999999999)  # mobile equipment identity
         # self.target_port = port_addresses['eNb']
         self.listener_thread = threading.Thread(target=self.listen)
         self.listener_thread.start()
@@ -104,7 +104,7 @@ class UE(LteProcess):
 
     def attach(self, eNb_address=port_addresses['eNb']):
         print('********starting the attach procedure********\n\n')
-        attach_request = f'ATTACH REQUEST FROM UE AT ADDRESS|{self.my_port}-IMSI={self.IMSI}|-MEI={self.MEI}'
+        attach_request = f'ATTACH REQUEST FROM UE AT ADDRESS|{self.my_port}-IMSI={self._IMSI}|-MEI={self._MEI}'
         communicator_thread = threading.Thread(target=self.talk, args=(eNb_address, attach_request))
         communicator_thread.start()
         # communicator_thread.join()
@@ -119,7 +119,7 @@ class UE(LteProcess):
 
     def handle_incoming_message(self, msg, conn):
         if msg.split()[:3] == ['USER', 'AUTHENTICATION', 'TOKEN']:
-            reply = f'UE AUTHENTICATION TOKEN={Authentication_token(self.IMSI)}'
+            reply = f'UE AUTHENTICATION TOKEN={Authentication_token(self._IMSI)}'
             communicator_thread = threading.Thread(target=self.talk,
                                                    args=(port_addresses['MME'], reply))
             communicator_thread.start()
@@ -128,10 +128,14 @@ class UE(LteProcess):
             print('UE: connection was accepted')
 
         elif msg == 'RRC RECONFIGURATION':
+            rcc = "RCC RECONFIGURATION COMPLETE"
+            communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['eNb'], rcc))
+            communicator_thread.start() 
+            
             sleep(0.005)
             msg = "ATTACH COMPLETE"
-            communicator_thread = threading.Thread(target=self.talk, args=(port_addresses['MME'], msg))
-            communicator_thread.start()            
+            communicator_thread2 = threading.Thread(target=self.talk, args=(port_addresses['MME'], msg))
+            communicator_thread2.start()            
 
 
 class eNb(LteProcess):
@@ -161,6 +165,7 @@ class eNb(LteProcess):
             communicator_thread2 = threading.Thread(target=self.talk, args=(port_addresses['UE'], response))
             communicator_thread2.start()            
             # communicator_thread2.join()
+        elif msg == "RCC RECONFIGURATION COMPLETE":
             context_response = "INITAL CONTEXT SETUP RESPONSE"
             communicator_thread3 = threading.Thread(target=self.talk, args=(port_addresses['MME'], context_response))
             communicator_thread3.start()  

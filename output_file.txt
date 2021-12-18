@@ -1,29 +1,29 @@
 ********starting the attach procedure********
 
 
-eNb  has a message received:   ATTACH REQUEST FROM UE AT ADDRESS|5000-IMSI=947743138825|-MEI=837467663209 
+eNb  has a message received:   ATTACH REQUEST FROM UE AT ADDRESS|5000-IMSI=910796862937|-MEI=126310302837 
 
-MME  has a message received:   ATTACH REQUEST FROM eNb AT ADDRESS|5001-IMSI=947743138825|-MEI=837467663209 
+MME  has a message received:   ATTACH REQUEST FROM eNb AT ADDRESS|5001-IMSI=910796862937|-MEI=126310302837 
 
-HSS  has a message received:   USER AUTHENTICATION REQUEST FROM MME AT ADDRESS|5003-IMSI=947743138825 
+HSS  has a message received:   USER AUTHENTICATION REQUEST FROM MME AT ADDRESS|5003-IMSI=910796862937 
 
-MME  has a message received:   HSS REFERENCE AUTHENTICATION TOKEN=25 
+MME  has a message received:   HSS REFERENCE AUTHENTICATION TOKEN=37 
 
 UE  has a message received:   USER AUTHENTICATION TOKEN REQUEST FROM MME AT ADDRESS|5003 
 
-MME  has a message received:   UE AUTHENTICATION TOKEN=25 
+MME  has a message received:   UE AUTHENTICATION TOKEN=37 
 
 AUTHENTICATION SUCCESSFUL
 
-HSS  has a message received:   UPDATE LOCATION REQUEST FROM MME AT ADDRESS|5003-IMSI=947743138825 
+HSS  has a message received:   UPDATE LOCATION REQUEST FROM MME AT ADDRESS|5003-IMSI=910796862937 
 
 MME  has a message received:   UPDATE LOCATION ACKNOWLEDGEMENT 
 
-SGW  has a message received:   CREATE SESSION REQUEST FROM MME AT ADDRESS|5003-IMSI=947743138825|-MEI=837467663209 
+SGW  has a message received:   CREATE SESSION REQUEST FROM MME AT ADDRESS|5003-IMSI=910796862937|-MEI=126310302837 
 
-PGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 610, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 502, \'payload\': "{\'flags\': 72, \'message_type\': 32, \'message_length\': 83, \'teid\': 25, \'sequence_number\': 167430, \'spare\': 0, \'IMSI\': 947743138825, \'APN\': \'jionet.mnc854.mcc405.gprs\', \'MEI\': 837467663209, \'MSISDN\': 65638974563, \'RAT_type\': 6, \'serving_network\': \'MCC 602- Egypt (Republic of) MNC 02\', \'PDN_type\': \'IPv4\', \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 170, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION REQUEST FROM SGW AT ADDRESS|5006-IMSI=947743138825|-MEI=837467663209\'}", \'checksum\': 42313}', 'header_checksum': 15352, 'total_checksum': 65233} 
+PGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 610, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '127.0.1.1', 'destination_ip': '127.0.1.1', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 502, \'payload\': "{\'flags\': 72, \'message_type\': 32, \'message_length\': 83, \'teid\': 37, \'sequence_number\': 167430, \'spare\': 0, \'IMSI\': 910796862937, \'APN\': \'jionet.mnc854.mcc405.gprs\', \'MEI\': 126310302837, \'MSISDN\': 65638974563, \'RAT_type\': 6, \'serving_network\': \'MCC 602- Egypt (Republic of) MNC 02\', \'PDN_type\': \'IPv4\', \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 170, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION REQUEST FROM SGW AT ADDRESS|5006-IMSI=910796862937|-MEI=126310302837\'}", \'checksum\': 42278}', 'header_checksum': 15070, 'total_checksum': 64926} 
 
-SGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 367, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '10.10.11.230', 'destination_ip': '10.10.11.230', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 259, \'payload\': "{\'flags\': 72, \'message_type\': 33, \'message_length\': 23, \'teid\': 25, \'sequence_number\': 1129199, \'spare\': 0, \'cause\': 16, \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 8, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION RESPONSE\'}", \'checksum\': 26114}', 'header_checksum': 15361, 'total_checksum': 47388} 
+SGW  has a message received:   {'ip_version': 4, 'header_length': 20, 'TOS': 0, 'total_length': 367, 'identification': 27117, 'flags': 2, 'offset': 0, 'TTL': 128, 'protocol': 17, 'source_ip': '127.0.1.1', 'destination_ip': '127.0.1.1', 'payload': '{\'source_port\': 2123, \'destination_port\': 2123, \'length\': 259, \'payload\': "{\'flags\': 72, \'message_type\': 33, \'message_length\': 23, \'teid\': 37, \'sequence_number\': 1129199, \'spare\': 0, \'cause\': 16, \'APN_restriction\': \'value 0\', \'recovery_reset_counter\': 8, \'bearer_context\': \'[grouped IE]\', \'payload\': \'CREATE SESSION RESPONSE\'}", \'checksum\': 26117}', 'header_checksum': 15079, 'total_checksum': 47112} 
 
 MME  has a message received:   CREATE SESSION RESPONSE 
 
@@ -32,6 +32,8 @@ eNb  has a message received:   ATTACH ACCEPT / INITAL CONTEXT SETUP REQUEST
 UE  has a message received:   ATTACH ACCEPT  
 
 UE  has a message received:   RRC RECONFIGURATION 
+
+eNb  has a message received:   RCC RECONFIGURATION COMPLETE 
 
 MME  has a message received:   INITAL CONTEXT SETUP RESPONSE 
 
@@ -53,9 +55,9 @@ SGW  has a message received:   DELETE SESSION REQUEST
 
 MME  has a message received:   DELETE SESSION RESPONSE 
 
-UE  has a message received:   DETACH ACCEPT 
-
 eNb  has a message received:   UE CONTEXT RELEASE COMMAND 
+
+UE  has a message received:   DETACH ACCEPT 
 
 MME  has a message received:   UE CONTEXT RELEASE COMPLETE 
 
