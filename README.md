@@ -1,6 +1,7 @@
 # LTE-Attatch-and-detatch-processes--mobile-communication-system-simulation
 Required Dependencies:
 python3
+
 pip install multiprocess
 
 This repo simulates the messages passed withing the procedures of Attach and Detach Proccesses in the LTE in script entitles LTE_processes.py
